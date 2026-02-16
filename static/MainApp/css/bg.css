@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+/* Фон */
+#space-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Всё что важно (чаты) */
+.app {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+}
+
+/* “Стекло” для читабельности, но красиво */
+.chat-surface {
+  background: rgba(8, 10, 18, 0.55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}

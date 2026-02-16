@@ -1,0 +1,77 @@
+.center-wrapper {
+    position: relative;
+    z-index: 5;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.message-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 18px;
+    width: 600px;
+    max-width: 90%;
+
+    background: rgba(10, 15, 25, 0.6);
+    backdrop-filter: blur(12px);
+
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 0 40px rgba(120, 0, 255, 0.15),
+        0 0 80px rgba(0, 150, 255, 0.08);
+}
+
+.msg-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+
+    color: white;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+
+.msg-input::placeholder {
+    color: rgba(255,255,255,0.4);
+}
+
+.send-btn,
+.attach-btn {
+    width: 44px;
+    height: 44px;
+
+    border-radius: 50%;
+    border: none;
+
+    cursor: pointer;
+    font-size: 18px;
+
+    transition: 0.25s ease;
+}
+
+.attach-btn {
+    background: rgba(255,255,255,0.08);
+    color: white;
+}
+
+.attach-btn:hover {
+    background: rgba(255,255,255,0.15);
+    transform: scale(1.08);
+}
+
+.send-btn {
+    background: linear-gradient(135deg, #6a00ff, #00cfff);
+    color: white;
+}
+
+.send-btn:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 20px rgba(0,200,255,0.6);
+}
