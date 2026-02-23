@@ -18,19 +18,31 @@ document.addEventListener('click', async (e) => {
 });
 
 const textarea = document.getElementById("text");
-const THRESHOLD = 80; // px: насколько близко к низу считать "я внизу"
-let shouldAutoScroll = true;
+const form = textarea.closest("form");
 
-function isNearBottom(box) {
-  return (box.scrollHeight - box.scrollTop - box.clientHeight) < THRESHOLD;
-}
+let sending = false;
 
-// Enter -> send (Shift+Enter = newline)
+// Enter => submit (Shift+Enter = newline)
 textarea.addEventListener("keydown", function (e) {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
-    const form = textarea.closest("form");
+    if (sending) return;         // 🔒 блок дубля
+    sending = true;
     htmx.trigger(form, "submit");
+  }
+});
+
+// Когда HTMX запрос закончился — разблокируем
+document.body.addEventListener("htmx:afterRequest", function (e) {
+  if (e.detail.elt === form) {
+    sending = false;
+  }
+});
+
+// Если запрос упал — тоже разблокируем
+document.body.addEventListener("htmx:responseError", function (e) {
+  if (e.detail.elt === form) {
+    sending = false;
   }
 });
 
