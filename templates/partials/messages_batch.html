@@ -1,0 +1,14 @@
+{% for i in messages %}
+  <div class="message incoming" data-msg-id="{{ i.id }}">
+    <div class="msg-text">{{ i.text }}</div>
+
+    {% if i.attachment_set.exists %}
+      <div class="msg-atts">
+        {% for att in i.attachment_set.all %}
+          <a class="attachment" href="{{ att.file.url }}" target="_blank">{{ att.file |cut:"user-attachments/" }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  <button class="copy-btn">📋</button>
+  </div>
+{% endfor %}

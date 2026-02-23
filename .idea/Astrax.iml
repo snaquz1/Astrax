@@ -20,12 +20,15 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="tsparticles" level="application" />
     <orderEntry type="library" name="three.js" level="application" />
+    <orderEntry type="library" name="htmx.org" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/../Astrax\templates" />
+        <option value="$MODULE_DIR$/templates" />
+        <option value="$MODULE_DIR$/static" />
+        <option value="$MODULE_DIR$/templates/partials" />
       </list>
     </option>
   </component>

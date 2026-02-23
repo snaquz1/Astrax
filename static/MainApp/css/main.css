@@ -1,77 +1,376 @@
-.center-wrapper {
-    position: relative;
-    z-index: 5;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+* { box-sizing: border-box; }
+
+body{
+  margin:0;
+  background:#000;
+  overflow:hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: rgba(255,255,255,0.92);
 }
 
-.message-box {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    padding: 14px 18px;
-    width: 600px;
-    max-width: 90%;
-
-    background: rgba(10, 15, 25, 0.6);
-    backdrop-filter: blur(12px);
-
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    box-shadow:
-        0 0 40px rgba(120, 0, 255, 0.15),
-        0 0 80px rgba(0, 150, 255, 0.08);
+/* Космос на заднем плане */
+#space-bg{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.msg-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-
-    color: white;
-    font-size: 16px;
-    letter-spacing: 0.5px;
+/* Layout */
+.layout{
+  position: relative;
+  z-index: 5;
+  display: flex;
+  height: 100vh;
+  padding: 18px;
+  gap: 18px;
 }
 
-.msg-input::placeholder {
-    color: rgba(255,255,255,0.4);
+/* Glass panel */
+.glass-panel{
+  background: rgba(10, 14, 22, 0.55);
+  backdrop-filter: blur(14px) saturate(1.25);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 10px 40px rgba(0,0,0,0.35),
+    0 0 60px rgba(0, 200, 255, 0.10),
+    0 0 80px rgba(140, 90, 255, 0.10);
 }
 
-.send-btn,
-.attach-btn {
-    width: 44px;
-    height: 44px;
-
-    border-radius: 50%;
-    border: none;
-
-    cursor: pointer;
-    font-size: 18px;
-
-    transition: 0.25s ease;
+/* Sidebar */
+.sidebar{
+  width: 300px;
+  min-width: 260px;
+  display:flex;
+  flex-direction: column;
+  padding: 18px;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-.attach-btn {
-    background: rgba(255,255,255,0.08);
-    color: white;
+.sidebar-header{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  margin-bottom: 16px;
+  text-decoration: none;
+  color: white;
 }
 
-.attach-btn:hover {
-    background: rgba(255,255,255,0.15);
-    transform: scale(1.08);
+.sidebar-logo{
+  width: 150px;
+  height: 100px;
+  filter:
+    drop-shadow(0 0 18px rgba(0, 200, 255, .25))
+    drop-shadow(0 0 30px rgba(140, 90, 255, .18));
+  user-select: none;
 }
 
-.send-btn {
-    background: linear-gradient(135deg, #6a00ff, #00cfff);
-    color: white;
+.brand-name{
+  font-weight: 700;
+  letter-spacing: 0.8px;
 }
 
-.send-btn:hover {
-    transform: scale(1.12);
-    box-shadow: 0 0 20px rgba(0,200,255,0.6);
+.brand-sub{
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 2px;
+}
+
+.chat-list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+
+  align-items: stretch; /* КРИТИЧНО */
+}
+
+
+.add-new-chat{
+  margin-top: 10px;
+  color: #8dff7e;
+  background: none;
+  border: none;
+}
+
+.chat-item{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  width: 100%;              /* все одной ширины */
+  min-height: 60px;         /* одинаковая высота */
+
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02);
+
+  text-decoration: none;
+  color: rgba(255,255,255,0.92);
+
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    transform .12s ease;
+}
+
+.chat-item:hover{
+  background: rgba(0,200,255,0.08);
+  border-color: rgba(0,200,255,0.18);
+  box-shadow:
+    0 0 16px rgba(0,200,255,0.10),
+    0 0 30px rgba(140,90,255,0.08);
+  transform: translateY(-1px);
+}
+
+.chat-item.active{
+  background: linear-gradient(
+    135deg,
+    rgba(0,200,255,0.15),
+    rgba(140,90,255,0.12)
+  );
+  border-color: rgba(0,200,255,0.28);
+  box-shadow:
+    0 0 24px rgba(0,200,255,0.18),
+    inset 0 0 12px rgba(255,255,255,0.05);
+}
+
+
+
+.chat-name{
+  font-weight: 600;
+  font-size: 14px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-preview{
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 2px;
+}
+
+/* Chat area */
+.chat-area{
+  flex: 1;
+  display:flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.chat-top{
+  border-radius: 20px;
+  padding: 14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+}
+
+.chat-title-name{
+  font-weight: 700;
+}
+
+.chat-title-sub{
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 2px;
+}
+
+/* Messages */
+.messages{
+  flex: 1;
+  border-radius: 20px;
+  padding: 18px;
+  overflow-y: auto;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  height: 100%;
+}
+
+.message{
+  display: inline-flex;
+  flex-direction: column;
+
+  min-width: 80px;          /* ВАЖНО: убирает "таблетки" */
+  max-width: min(60ch, 70%);
+
+  padding: 10px 14px;
+  border-radius: 16px;
+
+  white-space: normal;      /* пузырь обычный */
+}
+
+.msg-text{
+  white-space: pre-wrap;    /* форматирование только текста */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  tab-size: 4;
+}
+
+.copy-btn{
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  user-select: none;
+
+  opacity: 0;
+  transition: opacity .15s ease;
+
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+
+  width: 26px;
+  height: 26px;
+
+  cursor: pointer;
+  color: white;
+  font-size: 13px;
+}
+
+/* показываем при наведении */
+.message:hover .copy-btn{
+  opacity: 1;
+}
+
+.attachment{
+  color: #cfafff;
+  text-decoration: none;
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.incoming{
+  align-self: flex-start;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.outgoing{
+  align-self: flex-end;
+  background: linear-gradient(135deg,#6a00ff,#00cfff);
+  color: white;
+}
+
+/* Input area */
+.input-area{
+  border-radius: 20px;
+  padding: 12px;
+  display:flex;
+  align-items:center;
+  gap: 12px;
+}
+
+.msg-input{
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgba(255,255,255,0.92);
+  font-size: 15px;
+  min-width: 0;
+}
+
+.msg-input::placeholder{
+  color: rgba(255,255,255,0.45);
+}
+
+/* Liquid glass buttons */
+.glass-btn{
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.92);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  backdrop-filter: blur(14px) saturate(1.35);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+}
+
+.glass-btn::before{
+  content:"";
+  position:absolute;
+  inset:-60%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(0,200,255,0.35), transparent 55%),
+    radial-gradient(circle at 70% 70%, rgba(140,90,255,0.30), transparent 55%),
+    linear-gradient(135deg, rgba(255,255,255,0.20), rgba(255,255,255,0.02));
+  filter: blur(10px);
+  transform: rotate(20deg);
+  opacity: .85;
+}
+
+.glass-btn::after{
+  content:"";
+  position:absolute;
+  left:-60%;
+  top:-40%;
+  width: 140%;
+  height: 180%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: rotate(18deg);
+  opacity: 0;
+  transition: opacity .18s ease, transform .5s ease;
+}
+
+.glass-btn:hover{
+  transform: translateY(-1px) scale(1.03);
+  border-color: rgba(255,255,255,0.18);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.35),
+    0 0 22px rgba(0,200,255,0.20),
+    0 0 22px rgba(140,90,255,0.18);
+}
+
+.glass-btn:hover::after{
+  opacity: 1;
+  transform: translateX(40%) rotate(18deg);
+}
+
+.glass-btn:active{
+  transform: translateY(0) scale(0.99);
+}
+
+.icon{
+  position: relative;
+  z-index: 1;
+  font-size: 18px;
+}
+
+.send-btn{ background: rgba(0, 210, 255, 0.08); }
+.attach-btn{ background: rgba(140, 90, 255, 0.07); }
+
+/* Scrollbar (необязательно, но красиво) */
+.chat-list::-webkit-scrollbar,
+.messages::-webkit-scrollbar{
+  width: 8px;
+}
+
+.chat-list::-webkit-scrollbar-thumb,
+.messages::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,0.10);
+  border-radius: 999px;
+}
+
+.chat-list::-webkit-scrollbar-track,
+.messages::-webkit-scrollbar-track{
+  background: transparent;
 }

@@ -1,13 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}{% endblock %}</title>
-  {% block style %}{% endblock %}
-</head>
-<body>
-  {% block body %}{% endblock %}
-  {% block script %}{% endblock %}
-</body>
-</html>
+{% load static %}
+
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+        {% block style %}
+            <link rel="stylesheet" href="{% static 'MainApp/css/main.css' %}">
+            <link rel="stylesheet" href="{% static 'MainApp/css/main.css' %}">
+            <link rel="stylesheet" href="{% static 'MainApp/css/mobile.css' %}">
+        {% endblock %}
+    <link rel="icon" href="/media/icon.png">
+    </head>
+
+
+
+<div id="space-bg"></div>
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<audio id="msg-sound" src="/media/notification.mp3" preload="auto"></audio>
+{% block body %}{% endblock %}
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static "MainApp/js/anim.js" %}"></script>
+{% endblock %}
