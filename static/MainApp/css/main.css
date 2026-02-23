@@ -198,6 +198,7 @@ body{
 }
 
 .message{
+  position: relative;
   display: inline-flex;
   flex-direction: column;
 
@@ -207,7 +208,7 @@ body{
   padding: 10px 14px;
   border-radius: 16px;
 
-  white-space: normal;      /* пузырь обычный */
+  white-space: normal;     /* пузырь обычный */
 }
 
 .msg-text{
@@ -218,8 +219,9 @@ body{
 }
 
 .copy-btn{
-  position: absolute;
+  z-index: 2;
   top: 6px;
+  position: absolute;
   right: 6px;
   user-select: none;
 
