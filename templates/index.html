@@ -78,11 +78,11 @@
 
   <div id="poller"
        hx-get="{% url 'poll' selected_chat.id %}"
-       hx-trigger="every 1s"
+       hx-trigger="every 2s"
        hx-target="#messages"
        hx-swap="beforeend"
        hx-include="#last_id"
-       hx-sync="this:replace"
+       hx-sync="closest .chat-area:queue"
   >
 
   </div>
@@ -96,7 +96,9 @@
     hx-target="#messages"
     hx-swap="beforeend"
     hx-on::after-request="this.reset()"
-    enctype="multipart/form-data">
+    enctype="multipart/form-data"
+    hx-sync="closest .chat-area:queue"
+    >
 
 
     {% csrf_token %}
