@@ -198,6 +198,7 @@ body{
 }
 
 .message{
+  position: relative;
   display: inline-flex;
   flex-direction: column;
 
