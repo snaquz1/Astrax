@@ -64,7 +64,11 @@
       {% for i in messages %}
           <div class="message incoming" data-msg-id="{{ i.id }}"><div class="msg-text">{{ i.text }}</div>
           {% for att in i.attachment_set.all %}
-              <div><a class="attachment" href="{{ att.file.url }}" target="_blank">{{ att.file |cut:"user-attachments/"  }}</a></div>
+              {% if att.extension == "jpg" or "png" or "jpeg" %}
+                  <a target="_blank" href="{{ att.file.url }}"><img src="{{ att.file.url }}" width="200" ></a>
+                  {% else %}
+                  <div><a class="attachment" href="{{ att.file.url }}" target="_blank">{{ att.file |cut:"user-attachments/"  }}</a></div>
+              {% endif %}
           {% endfor %}
           <button class="copy-btn">📋</button>
           </div>
@@ -78,7 +82,7 @@
 
   <div id="poller"
        hx-get="{% url 'poll' selected_chat.id %}"
-       hx-trigger="every 2s"
+       hx-trigger="every 3s"
        hx-target="#messages"
        hx-swap="beforeend"
        hx-include="#last_id"
@@ -95,7 +99,23 @@
     hx-post="{% if selected_chat %}{% url "send" selected_chat.id %}{% endif %}"
     hx-target="#messages"
     hx-swap="beforeend"
-    hx-on::after-request="this.reset()"
+    hx-on:Before-request="
+    document.getElementById('poller')
+  .setAttribute('hx-trigger','none');
+"
+    hx-on::after-request="
+    this.reset();
+setTimeout(() => {
+  const box = document.getElementById('messages');
+  const msgs = box.querySelectorAll('.message[data-msg-id]');
+  if(msgs.length){
+    document.getElementById('last_id').value =
+      msgs[msgs.length-1].dataset.msgId;
+  }
+  document.getElementById('poller')
+    .setAttribute('hx-trigger','every 2s');
+}, 50);
+"
     enctype="multipart/form-data"
     hx-sync="closest .chat-area:queue"
     >
