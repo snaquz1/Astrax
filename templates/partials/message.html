@@ -3,6 +3,8 @@
   {% for att in msg.attachment_set.all %}
       {% if att.extension == "jpg" or att.extension == "png" or att.extension == "jpeg" or att.extension == "webp" %}
                   <a target="_blank" href="{{ att.file.url }}"><img src="{{ att.file.url }}" width="350" ></a>
+          {% elif att.extension == "mp4" %}
+          <a target="_blank" href="{{ att.file.url }}"><video width="350" controls src="{{ att.file.url }}"></video></a>
                   {% else %}
                   <div><a class="attachment" href="{{ att.file.url }}" target="_blank">{{ att.file |cut:"user-attachments/"  }}</a></div>
               {% endif %}
