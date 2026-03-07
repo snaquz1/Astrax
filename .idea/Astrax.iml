@@ -29,6 +29,7 @@
         <option value="$MODULE_DIR$/templates" />
         <option value="$MODULE_DIR$/static" />
         <option value="$MODULE_DIR$/templates/partials" />
+        <option value="$MODULE_DIR$/Chat/templates" />
       </list>
     </option>
   </component>

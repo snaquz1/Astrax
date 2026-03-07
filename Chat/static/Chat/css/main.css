@@ -211,6 +211,7 @@ body{
   white-space: normal;     /* пузырь обычный */
 }
 
+
 .msg-text{
   white-space: pre-wrap;    /* форматирование только текста */
   overflow-wrap: anywhere;

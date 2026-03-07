@@ -45,74 +45,19 @@
       </div>
     </div>
 
-  <div class="messages glass-panel" id="messages"
-     hx-on="htmx:afterSettle:
-              (function(){
-                const box = document.getElementById('messages');
-                if(!box) return;
+  {% if selected_chat %}
+      <div class="status-logs" id="status-logs"></div>
+  {% endif %}
 
-                const msgs = box.querySelectorAll('.message[data-msg-id]');
-                if(msgs.length){
-                  const last = msgs[msgs.length - 1];
-                  const hid = document.getElementById('last_id');
-                  if(hid) hid.value = last.dataset.msgId;
-                }
 
-              })()
-            "
-  >
+  <div class="messages glass-panel" id="messages">
       {% for i in messages %}
           {% include "partials/message.html" with msg=i %}
       {% endfor %}
     </div>
 
-    {% if selected_chat %}
-
-    <input type="hidden" id="last_id" name="after"
-     value="{% if messages %}{{ messages.last.id }}{% else %}0{% endif %}">
-
-  <div id="poller"
-       hx-get="{% url 'poll' selected_chat.id %}"
-       hx-trigger="every 3s"
-       hx-target="#messages"
-       hx-swap="beforeend"
-       hx-include="#last_id"
-       hx-sync="closest .chat-area:queue"
-  >
-
-  </div>
-        
-{% endif %}
-  
     {% if selected_chat.id %}
-    <form class="input-area glass-panel"
-    method="post"
-    hx-post="{% if selected_chat %}{% url "send" selected_chat.id %}{% endif %}"
-    hx-target="#messages"
-    hx-swap="beforeend"
-    hx-on:Before-request="
-    document.getElementById('poller')
-  .setAttribute('hx-trigger','none');
-"
-    hx-on::after-request="
-    this.reset();
-setTimeout(() => {
-  const box = document.getElementById('messages');
-  const msgs = box.querySelectorAll('.message[data-msg-id]');
-  if(msgs.length){
-    document.getElementById('last_id').value =
-      msgs[msgs.length-1].dataset.msgId;
-  }
-  document.getElementById('poller')
-    .setAttribute('hx-trigger','every 2s');
-}, 50);
-"
-    enctype="multipart/form-data"
-    hx-sync="closest .chat-area:queue"
-    >
-
-
-    {% csrf_token %}
+    <div class="input-area glass-panel">
 
       <textarea name="text" id="text" placeholder="Enter message..." class="msg-input"></textarea>
 
@@ -125,7 +70,7 @@ setTimeout(() => {
       <button type="submit" id="send-btn" class="glass-btn send-btn" title="Send">
         <span class="icon">➤</span>
       </button>
-    </form>
+    </div>
   {% endif %}
   </main>
 
@@ -133,7 +78,11 @@ setTimeout(() => {
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'MainApp/js/send.js' %}"></script>
-    <script src="{% static "MainApp/js/attach.js" %}"></script>
-    <script src="{% static "MainApp/js/notif.js" %}"></script>
+{#    <script src="{% static 'MainApp/js/send.js' %}"></script>#}
+{#    <script src="{% static "MainApp/js/attach.js" %}"></script>#}
+{#    <script src="{% static "MainApp/js/notif.js" %}"></script>#}
+    <script>const chat_id = "{{ selected_chat.id }}"</script>
+    <script src="{% static "Chat/js/websocket.js" %}"></script>
+    <script src="{% static "Chat/js/copybtn.js" %}"></script>
+
 {% endblock %}

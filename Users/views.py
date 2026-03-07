@@ -6,7 +6,7 @@ from django.contrib.auth import login, authenticate, logout
 from .forms import SignUpForm, LoginForm
 
 
-"""def signup_view(request):
+def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -18,7 +18,7 @@ from .forms import SignUpForm, LoginForm
             messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
     else:
         form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})"""
+    return render(request, 'signup.html', {'form': form})
 
 
 def login_view(request):

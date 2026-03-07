@@ -23,8 +23,9 @@ from django.conf import settings
 urlpatterns = [
     # your other paths here
     path('admin/', admin.site.urls),
-    path("", include("MainApp.urls")),
+    #path("", include("MainApp.urls")),
     path("", include("Users.urls")),
+    path("", include("Chat.urls")),
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 ]

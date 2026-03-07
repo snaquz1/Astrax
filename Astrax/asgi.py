@@ -8,9 +8,20 @@ https://docs.djangoproject.com/en/6.0/howto/deployment/asgi/
 """
 
 import os
-
+print("🔥 ASGI LOADED 🔥")
+from channels.auth import AuthMiddleware, AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Astrax.settings')
+import Chat.routing
 
-application = get_asgi_application()
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Astrax.settings')
+django_asgi_app = get_asgi_application()
+
+application = ProtocolTypeRouter({
+    "http": django_asgi_app, #Важно
+    "websocket": AuthMiddlewareStack(
+        URLRouter(Chat.routing.websocket_urlpatterns)
+
+    ),
+})
