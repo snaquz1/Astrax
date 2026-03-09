@@ -5,4 +5,5 @@ from Users.models import CustomUser
 
 # Register your models here.
 admin.site.register(Chat)
+admin.site.register(ChatMember)
 admin.site.register(Message)

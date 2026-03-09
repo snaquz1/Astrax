@@ -211,6 +211,14 @@ body{
   white-space: normal;     /* пузырь обычный */
 }
 
+.sender-username{
+  color: #4ac1f7;
+  margin-bottom: 15px;
+}
+
+.mine{
+  color: red;
+}
 
 .msg-text{
   white-space: pre-wrap;    /* форматирование только текста */
@@ -241,7 +249,6 @@ body{
   font-size: 13px;
 }
 
-/* показываем при наведении */
 .message:hover .copy-btn{
   opacity: 1;
 }
@@ -263,8 +270,8 @@ body{
 }
 
 .outgoing{
-  align-self: flex-end;
-  background: linear-gradient(135deg,#6a00ff,#00cfff);
+  align-self: flex-start;
+  background: linear-gradient(135deg,#6a00ff, #044453);
   color: white;
 }
 
@@ -361,7 +368,6 @@ body{
 .send-btn{ background: rgba(0, 210, 255, 0.08); }
 .attach-btn{ background: rgba(140, 90, 255, 0.07); }
 
-/* Scrollbar (необязательно, но красиво) */
 .chat-list::-webkit-scrollbar,
 .messages::-webkit-scrollbar{
   width: 8px;

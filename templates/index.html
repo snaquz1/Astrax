@@ -4,6 +4,26 @@
 {% block title %}Привет, {{ request.user }}!{% endblock %}
 {% block body %}
 
+      <div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">×</span>
+    <div id="win-content">
+        <h2>Информация:</h2>
+        <p>Название чата: {{ selected_chat.title }}</p>
+        <p>Количество сообщений: {{ messages.count }}</p>
+        <p>Участники: </p>
+        {% for member in selected_chat.members.all %}
+            <p>{{ member.username }}</p>
+        {% endfor %}
+        <p>Ссылка-приглашение: <span id="invitelink">{{ selected_chat.invite_token }}</span></p>
+        
+        <a href="/deletechat/{{ selected_chat.id }}" class="delete-btn">Удалить чат</a>
+    </div>
+  </div>
+</div>
+    
+    
+    
 
 <div class="layout">
   <!-- SIDEBAR -->
@@ -37,17 +57,22 @@
   </aside>
 
   <!-- CHAT AREA -->
+{% if selected_chat %}
   <main class="chat-area">
     <div class="chat-top glass-panel">
 
       <div class="chat-title">
         <div class="chat-title-name">{{ selected_chat.title}}</div>
       </div>
+        <div class="manage-chat">
+          <a href="deletechat/{{ selected_chat.id }}"><img width="30" src="/media/trash.png"></a>
+            <button onclick="openModal()"><img width="30" src="/media/edit.png"></button>
+      </div>
     </div>
 
-  {% if selected_chat %}
+
+
       <div class="status-logs" id="status-logs"></div>
-  {% endif %}
 
 
   <div class="messages glass-panel" id="messages">
@@ -56,7 +81,6 @@
       {% endfor %}
     </div>
 
-    {% if selected_chat.id %}
     <div class="input-area glass-panel">
 
       <textarea name="text" id="text" placeholder="Enter message..." class="msg-input"></textarea>
@@ -71,18 +95,26 @@
         <span class="icon">➤</span>
       </button>
     </div>
-  {% endif %}
+
   </main>
 
 </div>
+
+    {% endif %}
+    <h1>< Выберите чат!</h1>
 {% endblock %}
 
 {% block script %}
 {#    <script src="{% static 'MainApp/js/send.js' %}"></script>#}
 {#    <script src="{% static "MainApp/js/attach.js" %}"></script>#}
 {#    <script src="{% static "MainApp/js/notif.js" %}"></script>#}
-    <script>const chat_id = "{{ selected_chat.id }}"</script>
+    <script>
+        const chat_id = "{{ selected_chat.id }}"
+        const user = "{{ request.user }}"
+        const request = "{{ request }}"
+    </script>
     <script src="{% static "Chat/js/websocket.js" %}"></script>
     <script src="{% static "Chat/js/copybtn.js" %}"></script>
+    <script src="{% static "Chat/js/modal.js" %}"></script>
 
 {% endblock %}

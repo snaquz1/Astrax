@@ -1,4 +1,5 @@
-<div class="message incoming" data-msg-id="{{ msg.id }}">
+<div class="message {% if msg.username == request.user %}outgoing{% else %}incoming{% endif %}" data-msg-id="{{ msg.id }}">
+<div class="sender-username">{{ msg.username }}:</div>
   <div class="msg-text">{{ msg.text }}</div>
   {% for att in msg.attachment_set.all %}
       {% if att.extension == "jpg" or att.extension == "png" or att.extension == "jpeg" or att.extension == "webp" %}

@@ -3,18 +3,16 @@
     <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
-        {% block style %}
-            <link rel="stylesheet" href="{% static 'Chat/css/main.css' %}">
-            <link rel="stylesheet" href="{% static 'Chat/css/main.css' %}">
-            <link rel="stylesheet" href="{% static 'Chat/css/mobile.css' %}">
-        {% endblock %}
+        <link rel="stylesheet" href="{% static 'Chat/css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'Chat/css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'Chat/css/mobile.css' %}">
+        <link rel="stylesheet" href="{% static "Chat/css/modalwin.css" %}"/>
     <link rel="icon" href="/media/icon.png">
     </head>
 
 
 
 <div id="space-bg"></div>
-<script src="https://unpkg.com/htmx.org@1.9.12"></script>
 <audio id="msg-sound" src="/media/notification.mp3" preload="auto"></audio>
 {% block body %}{% endblock %}
 {% block script %}

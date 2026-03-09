@@ -6,10 +6,20 @@ const statusLogs = document.getElementById("status-logs");
 
 messages.scrollTop = messages.scrollHeight;
 
-function addLine(text) {
+function addMessage(text, username) {
   const div = document.createElement("div");
-  div.className = "message incoming"
-  div.textContent = text;
+  console.log(username, user)
+  if (username === user){
+    div.className = "message outgoing"
+  }else {
+    div.className = "message incoming"
+  }
+    div.innerHTML = `
+    <div class="sender-username">${username}:</div>
+  <div class="msg-text">${text}</div>
+<button class="copy-btn">📋</button>
+  `;
+
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
@@ -21,7 +31,6 @@ function addStatusLog(log){
   statusLogs.scrollTop = messages.scrollHeight;
 }
 
-// ws или wss (если сайт на https)
 const scheme = (location.protocol === "https:") ? "wss" : "ws";
 
 // создаём соединение
@@ -34,7 +43,7 @@ socket.onerror = () => addStatusLog("Произошла ошибка ❌");
 // сервер прислал сообщение
 socket.onmessage = (event) => {
   const data = JSON.parse(event.data);
-  addLine(`${data.message}`);
+  addMessage(`${data.message}`, `${data.username}`);
 };
 
 // отправка

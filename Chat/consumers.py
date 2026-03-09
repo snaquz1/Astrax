@@ -1,42 +1,20 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.template.context_processors import request
 from Chat.models import *
 from channels.db import sync_to_async
-
-class PingConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        await self.accept()
-
-        await self.send(text_data=json.dumps({
-            "type": "info",
-            "message": "Connected!!"
-        }))
-
-    async def receive(self, text_data=None, bytes_data=None):
-        if not text_data:
-            return
-
-        data = json.loads(text_data)
-        msg = data.get("message", "")
-
-        #reciprocate
-        await self.send(text_data=json.dumps({
-            "type": "message",
-            "message": f"{msg} "
-        }))
-
-    async def disconnect(self, close_code):
-        pass
 
 class ChatConsumer(AsyncWebsocketConsumer):
     @sync_to_async
     def create_message(self, chat_id, text):
         chat = Chat.objects.get(id=chat_id)
-        message = Message.objects.create(chat=chat, text=text)
+        user = self.scope["user"]
+        message = Message.objects.create(chat=chat, text=text, username=user)
         return {
             "id": message.id,
             "chat_id": chat_id,
-            "text": text
+            "text": text,
+            "easy": False,
         }
 
 
@@ -57,12 +35,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if not message:
             return
-        await self.channel_layer.group_send(self.room_group_name, {"type": "chat.message", "message": message})
+        await self.channel_layer.group_send(self.room_group_name, {"type": "chat.message", "message": message, "username": self.scope["user"].username})
         await self.create_message(self.chat_id, message)
 
     async def chat_message(self, event):
         message = event["message"]
-        await self.send(text_data=json.dumps({"message": message}))
+        await self.send(text_data=json.dumps({"message": message, "username": event["username"]}))
 
 
     async def disconnect(self, close_code):
