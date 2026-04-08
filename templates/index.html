@@ -3,27 +3,61 @@
 
 {% block title %}Привет, {{ request.user }}!{% endblock %}
 {% block body %}
+<div id="modal" class="modal" style="display: {% if openmodal %}block{% else %}none{% endif %}">
+    <div class="modal-content">
+        <button class="modal-close" type="button" onclick="closeModal()">×</button>
 
-      <div id="modal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">×</span>
-    <div id="win-content">
-        <h2>Информация:</h2>
-        <p>Название чата: {{ selected_chat.title }}</p>
-        <p>Количество сообщений: {{ messages.count }}</p>
-        <p>Участники: </p>
-        {% for member in selected_chat.members.all %}
-            <p>{{ member.username }}</p>
-        {% endfor %}
-        <p>Ссылка-приглашение: <span id="invitelink">{{ selected_chat.invite_token }}</span></p>
-        
+        <div id="win-content" class="chat-info">
+            <h2 class="chat-info__title">Информация о чате</h2>
+
+            <div class="chat-info__section">
+                <div class="info-row">
+                    <span class="info-label">Название чата</span>
+                    <span class="info-value">{{ selected_chat.title }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Количество сообщений</span>
+                    <span class="info-value">{{ messages.count }}</span>
+                </div>
+            </div>
+
+            <div class="chat-info__section">
+                <h3 class="members-title">Участники</h3>
+
+                <div class="members-list">
+                    {% for member in members %}
+                        <div class="member-item">
+                            <div class="member-item__info">
+                                <span class="member-item__name {% if request.user == member.user %}mine{% endif %}">{{ member.user }}</span>
+                                <span class="member-item__role">{{ member.role }}</span>
+                            </div>
+                            <div class="manage-users">
+                                {% if user_role == "admin" and member.user != request.user %}
+                            <a href="/manage/{{ selected_chat.id }}/{{ member.id }}/delete" class="member-item__delete" type="button" title="Удалить участника">
+                                <img src="/media/trash.png" alt="Удалить" width="18" height="18">
+                            </a>
+                            {% endif %}
+                            {% if member.user == request.user %}
+                            <a href="#" class="member-item__delete" type="button" title="Выйти из чата">
+                                <img src="/media/logout.png" alt="выйти" width="18" height="18">
+                            </a>
+                        {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="members-empty">Участников нет</p>
+                    {% endfor %}
+                </div>
+                <hr>
+        <p>Ссылка-приглашение: <span class="invitelink" id="invitelink">{{ selected_chat.invite_token }}</span><button class="copy-link-btn">Копировать</button></p>
+
         <a href="/deletechat/{{ selected_chat.id }}" class="delete-btn">Удалить чат</a>
     </div>
   </div>
 </div>
-    
-    
-    
+</div>
+
 
 <div class="layout">
   <!-- SIDEBAR -->
@@ -85,12 +119,10 @@
 
       <textarea name="text" id="text" placeholder="Enter message..." class="msg-input"></textarea>
 
-      <button type="button" id="attach-btn" class="glass-btn attach-btn" title="Attach">
+      <button onclick="showInputFiles()" type="button" id="attach-btn" class="glass-btn attach-btn" title="Attach">
           📎
       </button>
-
-        <input id="input-files" style="display: none" name="files" type="file" multiple>
-
+        <input style="display: none" id="input-files"  name="files" type="file" multiple>
       <button type="submit" id="send-btn" class="glass-btn send-btn" title="Send">
         <span class="icon">➤</span>
       </button>

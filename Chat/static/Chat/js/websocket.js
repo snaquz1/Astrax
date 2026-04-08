@@ -34,27 +34,33 @@ function addStatusLog(log){
 const scheme = (location.protocol === "https:") ? "wss" : "ws";
 
 // создаём соединение
-const socket = new WebSocket(`${scheme}://${location.host}/ws/chat/${chat_id}/`);
+function connect(){
+  statusLogs.innerHTML = "";
+  const socket = new WebSocket(`${scheme}://${location.host}/ws/chat/${chat_id}/`);
 
-socket.onopen = () => addStatusLog("Подключено по WebSocket ✅");
-socket.onclose = () => addStatusLog("Соединение WebSocket закрыто ❌");
-socket.onerror = () => addStatusLog("Произошла ошибка ❌");
+  socket.onopen = () => addStatusLog("Подключено по WebSocket ✅");
+  socket.onclose = () => {
+    addStatusLog("Соединение WebSocket закрыто ❌");
+    addStatusLog("Пробуем подключиться...")
+    setTimeout(connect, 2000)
+  };
+  socket.onerror = () => addStatusLog("Произошла ошибка ❌");
 
 // сервер прислал сообщение
-socket.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  addMessage(`${data.message}`, `${data.username}`);
-};
-
-// отправка
-sendBtn.onclick = () => {
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    addMessage(`${data.message}`, `${data.username}`);
+  };
+  sendBtn.onclick = () => {
   const text = input.value.trim();
   if (!text) return;
   socket.send(JSON.stringify({ message: text }));
   input.value = "";
   input.focus();
-};
+  };
+}
 
+connect();
 
 input.addEventListener("keypress", (e) => {
   if (e.key === "Enter") {
@@ -62,3 +68,5 @@ input.addEventListener("keypress", (e) => {
     sendBtn.click();
   }
 });
+
+

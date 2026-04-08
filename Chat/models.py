@@ -10,6 +10,7 @@ from Users.models import CustomUser
 class Attachment(models.Model):
     message = models.ForeignKey('Message', on_delete=models.CASCADE)
     file = models.FileField(upload_to='user-attachments/')
+    ext = models.CharField(max_length=10, default='.txt')
 
     def extension(self):
         return self.file.name.split('.')[-1]
@@ -17,7 +18,7 @@ class Attachment(models.Model):
 class Message(models.Model):
     username = models.ForeignKey("Users.CustomUser", on_delete=models.CASCADE, related_name="users", default=1)
     chat = models.ForeignKey('Chat', on_delete=models.CASCADE, default=1, related_name="messages")
-    text = models.TextField()
+    text = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

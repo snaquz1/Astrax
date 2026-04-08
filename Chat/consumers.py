@@ -17,12 +17,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "easy": False,
         }
 
+    @sync_to_async
+    def in_chat(self, chat_id, user):
+        return ChatMember.objects.filter(chat=chat_id, user=user).exists()
+
+
 
     async def connect(self):
         self.chat_id = self.scope['url_route']['kwargs']['chat_id']
         self.room_group_name = f"chat_{self.chat_id}"
+        self.user = self.scope["user"]
+        self.user_group_name = f"user_{self.user.id}"
+
+        if not await self.in_chat(self.chat_id, self.user):
+            await self.close()
+            return
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_add(self.user_group_name, self.channel_name)
+
         await self.accept()
 
 
@@ -35,13 +48,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if not message:
             return
-        await self.channel_layer.group_send(self.room_group_name, {"type": "chat.message", "message": message, "username": self.scope["user"].username})
+
         await self.create_message(self.chat_id, message)
+        await self.channel_layer.group_send(self.room_group_name, {"type": "chat.message", "message": message, "username": self.scope["user"].username})
+
 
     async def chat_message(self, event):
         message = event["message"]
         await self.send(text_data=json.dumps({"message": message, "username": event["username"]}))
 
-
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_discard(self.user_group_name, self.channel_name)
+
+    async def force_disconnect(self, event):
+        if str(self.chat_id) == str(event["chat_id"]):
+            await self.send(text_data=json.dumps({
+                "type": "kicked",
+                "username": "server",
+                "message": "Вас удалили из чата"
+            }))
+            await self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+            )
+            await self.close()

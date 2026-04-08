@@ -17,3 +17,11 @@ document.addEventListener('click', async (e) => {
   }
 });
 
+function showInputFiles(){
+  let inputFiles = document.querySelector("#input-files")
+  if (inputFiles.style.display === "none"){
+    inputFiles.style.display = "block";
+  }else {
+    inputFiles.style.display = "none";
+  }
+}
