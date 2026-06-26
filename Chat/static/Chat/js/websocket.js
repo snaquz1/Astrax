@@ -3,6 +3,7 @@ const input = document.getElementById("text");
 const sendBtn = document.getElementById("send-btn");
 const close = document.getElementById("close");
 const statusLogs = document.getElementById("status-logs");
+const fileInput = document.getElementById("input-files");
 
 messages.scrollTop = messages.scrollHeight;
 
@@ -49,15 +50,50 @@ function connect(){
 // сервер прислал сообщение
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    addMessage(`${data.message}`, `${data.username}`);
+
+    // Создаем временный контейнер, чтобы превратить строку в HTML
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = data.html;
+
+    // Берем готовое сообщение из твоего шаблона message.html
+    const messageElement = tempDiv.firstElementChild;
+
+    // Добавляем в окно чата
+    messages.appendChild(messageElement);
+
+    // Скроллим вниз
+    messages.scrollTop = messages.scrollHeight;
   };
-  sendBtn.onclick = () => {
+
+
+  sendBtn.onclick = async () => {
   const text = input.value.trim();
-  if (!text) return;
-  socket.send(JSON.stringify({ message: text }));
-  input.value = "";
-  input.focus();
-  };
+  const files = fileInput ? fileInput.files : [];
+  if (!text && files.length === 0) return;
+
+  if (files.length > 0) {
+    const formData = new FormData();
+    formData.append('text', text);
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+    await fetch(`/chat/${chat_id}/send`, {
+      method: 'POST',
+      body: formData,
+      headers: {'X-CSRFToken': csrfToken}
+    });
+
+    input.value = "";
+    if (fileInput) fileInput.value = "";
+    input.focus();
+  }else {
+    socket.send(JSON.stringify({ message: text }));
+      input.value = "";
+      input.focus();}
+  }
 }
 
 connect();

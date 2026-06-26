@@ -5,7 +5,9 @@ from channels.layers import get_channel_layer
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
+from datetime import datetime
 
 from Users.models import CustomUser
 from Chat.models import *
@@ -18,7 +20,7 @@ VIDEO_EXTENSIONS = ['mp4']
 GIF_EXTENSIONS = ['gif']
 
 def serialize_attachment(att):
-    ext = (att.extension or "").lower()
+    ext = (att.extension() or "").lower()
     return {
         "id": att.id,
         "url": att.file.url,
@@ -41,7 +43,7 @@ def send_message(request, chat_id):
         return JsonResponse({"error": "You need to send at least one file."}, status=400)
     message = Message.objects.create(
         chat=chat,
-        username=user.username,
+        username=user,
         text=text,
     )
 
@@ -57,6 +59,12 @@ def send_message(request, chat_id):
         )
         attachments_data.append(serialize_attachment(attachment))
 
+        html_message = render_to_string(
+            'partials/message.html',
+            {'msg': message, 'request': request},
+            request=request
+        )
+
         event_data = {
             "type": "chat.message",
             "message_id": message.id,
@@ -64,7 +72,8 @@ def send_message(request, chat_id):
             "message": message.text,
             "username": user.username,
             "attachments": attachments_data,
-            "created_at": message.created_at.isoformat(),
+            "created_at": datetime.now().isoformat(),
+            "html": html_message,
         }
 
         channel_layer = get_channel_layer()
