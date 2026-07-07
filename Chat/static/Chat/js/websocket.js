@@ -48,22 +48,42 @@ function connect(){
   socket.onerror = () => addStatusLog("Произошла ошибка ❌");
 
 // сервер прислал сообщение
-  socket.onmessage = (event) => {
+socket.onmessage = (event) => {
+  try {
     const data = JSON.parse(event.data);
+    console.log("👉 Вот что РЕАЛЬНО прилетело с сервера:", data);
 
-    // Создаем временный контейнер, чтобы превратить строку в HTML
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = data.html;
+    // ВАРИАНТ А: Сервер прислал готовый HTML (для сообщений с файлами)
+    if (data.html) {
+      console.log("Тип: Готовый HTML с бэкенда");
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = data.html.trim();
+      const messageElement = tempDiv.firstElementChild;
 
-    // Берем готовое сообщение из твоего шаблона message.html
-    const messageElement = tempDiv.firstElementChild;
+      if (messageElement) {
+        messages.appendChild(messageElement);
+        messages.scrollTop = messages.scrollHeight;
+        return; // Всё сделали, выходим
+      }
+    }
 
-    // Добавляем в окно чата
-    messages.appendChild(messageElement);
+    // ВАРИАНТ Б: Сервер прислал просто текст (обычное сообщение по WebSocket)
+    // Проверяем все возможные ключи, где может лежать текст
+    const text = data.message || data.text || data.content;
+    const username = data.username || data.sender;
 
-    // Скроллим вниз
-    messages.scrollTop = messages.scrollHeight;
-  };
+    if (text) {
+      console.log("Тип: Сырой текст. Рисуем через addMessage()");
+      addMessage(text, username);
+      return;
+    }
+
+    console.warn("💀 Сервер прислал какой-то странный формат, я не понял что с ним делать:", data);
+
+  } catch (error) {
+    console.error("💥 Ошибка при разборе сообщения:", error);
+  }
+};
 
 
   sendBtn.onclick = async () => {

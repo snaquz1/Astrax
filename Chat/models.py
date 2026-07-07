@@ -37,7 +37,7 @@ class ChatMember(models.Model):
 class Chat(models.Model):
     members = models.ManyToManyField(CustomUser, through=ChatMember)
     title = models.CharField(max_length=100)
-    invite_token = models.CharField(max_length=100, default=secrets.token_urlsafe(10))
+    invite_token = models.CharField(max_length=100, default=lambda: secrets.token_urlsafe(10))
 
 
     def __str__(self):
